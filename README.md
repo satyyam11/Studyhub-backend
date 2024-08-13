@@ -13,8 +13,4 @@
 
 StudyHub is currently in development. We are actively working on enhancing features, optimizing performance, and expanding functionalities. 
 
-## Installation
 
-1. **Clone the Repository**:
-   ```bash
-   git clone https://github.com/satyyam11/Studyhub-backend.git
