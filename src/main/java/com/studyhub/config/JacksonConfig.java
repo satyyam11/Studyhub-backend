@@ -1,0 +1,21 @@
+package com.studyhub.config;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.studyhub.serializer.FirestoreSerializer;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class JacksonConfig {
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(DocumentSnapshot.class, new FirestoreSerializer());
+        objectMapper.registerModule(module);
+        return objectMapper;
+    }
+}
