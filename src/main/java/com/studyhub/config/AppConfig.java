@@ -6,6 +6,7 @@ import com.google.cloud.storage.StorageOptions;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,10 +15,7 @@ public class AppConfig {
 
     @Bean
     public Storage storage() throws IOException {
-        InputStream serviceAccount = getClass().getClassLoader().getResourceAsStream("serviceAccountKey.json");
-        if (serviceAccount == null) {
-            throw new IOException("Service account key file not found");
-        }
+        InputStream serviceAccount = new FileInputStream("C:/Program Files/Java/studyhub/src/main/resources/serviceAccountKey.json");
         GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
         return StorageOptions.newBuilder().setCredentials(credentials).build().getService();
     }

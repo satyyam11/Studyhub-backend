@@ -1,45 +1,45 @@
 package com.studyhub.controller;
 
-import com.studyhub.service.FileService;
+import com.studyhub.service.CloudStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @RestController
-@RequestMapping("/api/files")
 public class FileController {
 
     @Autowired
-    private FileService fileService;
+    private CloudStorageService cloudStorageService;
 
-    @PostMapping("/upload")
+    @PostMapping("/files/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String fileUrl = fileService.uploadFile(file);
+            String fileUrl = cloudStorageService.uploadFile(file);
             return ResponseEntity.ok(fileUrl);
-        } catch (IOException e) {
-            return ResponseEntity.badRequest().body("Failed to upload file: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error uploading file: " + e.getMessage());
         }
     }
 
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
+    @GetMapping("/files/download")
+    public ResponseEntity<InputStreamResource> downloadFile(@RequestParam("fileName") String fileName) {
         try {
-            byte[] data = fileService.downloadFile(fileName);
-            ByteArrayResource resource = new ByteArrayResource(data);
-            return ResponseEntity.ok()
-                    .contentLength(data.length)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(resource);
+            InputStream inputStream = cloudStorageService.downloadFile(fileName);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
+            return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
         } catch (IOException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.internalServerError().body(null);
         }
     }
 }
