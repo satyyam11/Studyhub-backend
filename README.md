@@ -1,6 +1,6 @@
 # StudyHub
 
-**StudyHub** is an emerging community-based learning platform designed to enhance collaborative study and knowledge sharing. Built with a robust backend in Spring Boot and a dynamic frontend in React, StudyHub aims to provide an engaging environment for students and learners to connect and collaborate
+**StudyHub** is an emerging community-based learning platform designed to enhance collaborative study and knowledge sharing. Built with a robust backend in Spring Boot and a dynamic frontend in React, StudyHub aims to provide an engaging environment for students and learners to connect and collaborate.
 
 ## Features
 
