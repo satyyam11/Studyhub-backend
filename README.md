@@ -11,6 +11,6 @@
 
 ## Current Status
 
-StudyHub is currently in development. We are actively working on enhancing features, optimizing performance, and expanding functionalities. 
+StudyHub is currently in development. We are actively working on enhancing features, optimizing performance, and expanding functionalities.
 
 
