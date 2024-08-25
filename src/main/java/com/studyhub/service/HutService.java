@@ -21,6 +21,7 @@ public class HutService {
     @Autowired
     private Firestore firestore;
 
+    // Create a new Hut within a Hub
     public String createHut(String hubId, String name, String type) throws ExecutionException, InterruptedException {
         if (hubId == null || hubId.isEmpty()) {
             throw new IllegalArgumentException("Hub ID must not be null or empty");
@@ -32,31 +33,27 @@ public class HutService {
             throw new IllegalArgumentException("Hut type must not be null or empty");
         }
 
-        // Reference to the hub collection
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
 
-        // Reference to the huts subcollection
         CollectionReference hutsCollection = hubDoc.collection("huts");
 
-        // Create a new Hut document
         DocumentReference newHut = hutsCollection.document();
         Hut hut = new Hut(name, type);
         ApiFuture<WriteResult> result = newHut.set(hut);
 
-        return newHut.getId(); // Return the ID of the newly created Hut
+        return newHut.getId();
     }
 
+    // Get all Huts within a Hub
     public List<Hut> getHuts(String hubId) throws ExecutionException, InterruptedException {
         if (hubId == null || hubId.isEmpty()) {
             throw new IllegalArgumentException("Hub ID must not be null or empty");
         }
 
-        // Reference to the hub collection
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
 
-        // Reference to the huts subcollection
         CollectionReference hutsCollection = hubDoc.collection("huts");
 
         ApiFuture<QuerySnapshot> future = hutsCollection.get();
@@ -67,6 +64,7 @@ public class HutService {
                 .collect(Collectors.toList());
     }
 
+    // Get a specific Hut by its ID within a Hub
     public Hut getHutById(String hubId, String hutId) throws ExecutionException, InterruptedException {
         if (hubId == null || hubId.isEmpty()) {
             throw new IllegalArgumentException("Hub ID must not be null or empty");
@@ -75,11 +73,9 @@ public class HutService {
             throw new IllegalArgumentException("Hut ID must not be null or empty");
         }
 
-        // Reference to the hub collection
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
 
-        // Reference to the huts subcollection
         DocumentReference hutDoc = hubDoc.collection("huts").document(hutId);
 
         ApiFuture<com.google.cloud.firestore.DocumentSnapshot> future = hutDoc.get();
@@ -87,6 +83,7 @@ public class HutService {
         return documentSnapshot.toObject(Hut.class);
     }
 
+    // Delete a Hut by its ID within a Hub
     public void deleteHut(String hubId, String hutId) throws ExecutionException, InterruptedException {
         if (hubId == null || hubId.isEmpty()) {
             throw new IllegalArgumentException("Hub ID must not be null or empty");
@@ -95,11 +92,9 @@ public class HutService {
             throw new IllegalArgumentException("Hut ID must not be null or empty");
         }
 
-        // Reference to the hub collection
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
 
-        // Reference to the huts subcollection
         DocumentReference hutDoc = hubDoc.collection("huts").document(hutId);
 
         ApiFuture<WriteResult> result = hutDoc.delete();
