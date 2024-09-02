@@ -23,10 +23,23 @@ public class FileController {
 
     @PostMapping("/files/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        // Check if the file is empty
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is missing or empty.");
+        }
+
+        // Optionally, validate the file type
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/") && !contentType.equals("application/pdf")) {
+            return ResponseEntity.badRequest().body("Invalid file type. Only images and PDF files are allowed.");
+        }
+
         try {
+            // Upload the file and return the file URL
             String fileUrl = cloudStorageService.uploadFile(file);
             return ResponseEntity.ok(fileUrl);
         } catch (Exception e) {
+            // Catch any other exceptions and return a 500 status
             return ResponseEntity.internalServerError().body("Error uploading file: " + e.getMessage());
         }
     }
