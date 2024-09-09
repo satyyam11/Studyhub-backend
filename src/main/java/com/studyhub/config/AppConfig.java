@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 @Configuration
 public class AppConfig {
-gi
+
     @Bean
     public Storage storage() throws IOException {
         InputStream serviceAccount = new FileInputStream("C:/Program Files/Java/studyhub/src/main/resources/serviceAccountKey.json");
