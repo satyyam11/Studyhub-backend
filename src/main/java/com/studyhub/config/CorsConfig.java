@@ -1,4 +1,5 @@
 package com.studyhub.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,7 +17,12 @@ public class CorsConfig {
         // Allow all origins - you should restrict this in production
         config.setAllowCredentials(true);
         config.addAllowedOrigin("http://localhost:3000"); // React default port
+        config.addAllowedOrigin("https://464e-14-139-226-226.ngrok-free.app"); // ngrok URL
+
+        // Allow all headers
         config.addAllowedHeader("*");
+
+        // Allow all methods
         config.addAllowedMethod("*");
 
         source.registerCorsConfiguration("/**", config);

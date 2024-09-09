@@ -35,7 +35,6 @@ public class HutService {
 
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
-
         CollectionReference hutsCollection = hubDoc.collection("huts");
 
         DocumentReference newHut = hutsCollection.document();
@@ -53,7 +52,6 @@ public class HutService {
 
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
-
         CollectionReference hutsCollection = hubDoc.collection("huts");
 
         ApiFuture<QuerySnapshot> future = hutsCollection.get();
@@ -75,7 +73,6 @@ public class HutService {
 
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
-
         DocumentReference hutDoc = hubDoc.collection("huts").document(hutId);
 
         ApiFuture<com.google.cloud.firestore.DocumentSnapshot> future = hutDoc.get();
@@ -94,7 +91,6 @@ public class HutService {
 
         CollectionReference hubCollection = firestore.collection("hubs");
         DocumentReference hubDoc = hubCollection.document(hubId);
-
         DocumentReference hutDoc = hubDoc.collection("huts").document(hutId);
 
         ApiFuture<WriteResult> result = hutDoc.delete();

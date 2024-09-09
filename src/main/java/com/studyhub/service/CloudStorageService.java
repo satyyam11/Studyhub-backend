@@ -44,4 +44,7 @@ public class CloudStorageService {
         blob.downloadTo(outputStream);
         return new ByteArrayInputStream(outputStream.toByteArray());
     }
+
+    public void deleteFile(String fileName) {
+    }
 }

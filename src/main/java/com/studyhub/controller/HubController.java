@@ -1,20 +1,26 @@
 package com.studyhub.controller;
 
 import com.studyhub.service.HubService;
+import com.studyhub.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("/api/hubs")
+@RequestMapping("/hubs")
 public class HubController {
 
     @Autowired
     private HubService hubService;
+
+    @Autowired
+    private RoleService roleService;
 
     // Create a new Hub
     @PostMapping
@@ -28,29 +34,14 @@ public class HubController {
             if (result.startsWith("Error:")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
             }
+            // Extract the hubId from the result message
+            String hubId = result.split(": ")[1];
+            // Assign the creator role
+            roleService.assignCreatorRole(hubId, creatorId);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error creating hub: " + e.getMessage());
-        }
-    }
-
-    // Assign an aide to a Hub
-    @PostMapping("/{hubId}/aide")
-    public ResponseEntity<String> assignAide(
-            @PathVariable String hubId,
-            @RequestBody Map<String, String> request
-    ) {
-        try {
-            String aideId = request.get("aideId");
-            String result = hubService.assignAide(hubId, aideId);
-            if (result.startsWith("Error:")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-            }
-            return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error assigning aide: " + e.getMessage());
         }
     }
 
@@ -67,6 +58,28 @@ public class HubController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Map<String, Object>> getHubsForUser(@PathVariable String userId) {
+        try {
+            List<Map<String, Object>> userHubs = hubService.getHubsForUser(userId);
+            if (userHubs.isEmpty()) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("data", userHubs);
+                response.put("message", "No hubs found for this user.");
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+            Map<String, Object> response = new HashMap<>();
+            response.put("data", userHubs);
+            response.put("message", "Hubs fetched successfully.");
+            return ResponseEntity.ok(response);
+        } catch (ExecutionException | InterruptedException e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", "Error fetching hubs: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 
     // Update a Hub by ID
     @PutMapping("/{hubId}")

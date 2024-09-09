@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/notes")
 public class NoteController {
 
     @Autowired
@@ -26,10 +26,10 @@ public class NoteController {
         }
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Note>> getNotesByUserId(@PathVariable String userId) {
+    @GetMapping("/user/{userid}")
+    public ResponseEntity<List<Note>> getNotesByuserid(@PathVariable String userid) {
         try {
-            List<Note> notes = noteService.getNotesByUserId(userId);
+            List<Note> notes = noteService.getNotesByuserid(userid);
             return ResponseEntity.ok(notes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);

@@ -26,7 +26,7 @@ public class NoteService {
         noteMap.put("id", note.getId());
         noteMap.put("title", note.getTitle());
         noteMap.put("content", note.getContent());
-        noteMap.put("userId", note.getUserId());
+        noteMap.put("userid", note.getuserid());
         noteMap.put("createdAt", note.getCreatedAt().toString());
         noteMap.put("updatedAt", note.getUpdatedAt().toString());
 
@@ -34,9 +34,9 @@ public class NoteService {
         return note.getId();
     }
 
-    public List<Note> getNotesByUserId(String userId) throws ExecutionException, InterruptedException {
+    public List<Note> getNotesByuserid(String userid) throws ExecutionException, InterruptedException {
         CollectionReference notesRef = firestore.collection("notes");
-        Query query = notesRef.whereEqualTo("userId", userId);
+        Query query = notesRef.whereEqualTo("userid", userid);
         ApiFuture<QuerySnapshot> querySnapshot = query.get();
         List<QueryDocumentSnapshot> documents = querySnapshot.get().getDocuments();
         return documents.stream().map(doc -> doc.toObject(Note.class)).collect(Collectors.toList());

@@ -6,6 +6,7 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -53,6 +54,18 @@ public class FileController {
             return new ResponseEntity<>(new InputStreamResource(inputStream), headers, HttpStatus.OK);
         } catch (IOException e) {
             return ResponseEntity.internalServerError().body(null);
+        }
+    }
+
+    @DeleteMapping("/files/delete")
+    public ResponseEntity<String> deleteFile(@RequestParam("fileName") String fileName) {
+        try {
+            // Call the service to delete the file
+            cloudStorageService.deleteFile(fileName);
+            return ResponseEntity.ok("File deleted successfully.");
+        } catch (Exception e) {
+            // Catch any other exceptions and return a 500 status
+            return ResponseEntity.internalServerError().body("Error deleting file: " + e.getMessage());
         }
     }
 }

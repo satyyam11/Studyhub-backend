@@ -7,7 +7,7 @@ public class Note {
     private String id;
     private String title;
     private String content;
-    private String userId;
+    private String userid;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -15,10 +15,10 @@ public class Note {
     public Note() {
     }
 
-    public Note(String title, String content, String userId) {
+    public Note(String title, String content, String userid) {
         this.title = title;
         this.content = content;
-        this.userId = userId;
+        this.userid = userid;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
@@ -48,12 +48,12 @@ public class Note {
         this.content = content;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getuserid() {
+        return userid;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setuserid(String userid) {
+        this.userid = userid;
     }
 
     public LocalDateTime getCreatedAt() {
