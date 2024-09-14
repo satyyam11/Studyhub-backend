@@ -2,6 +2,8 @@ package com.studyhub.controller;
 
 import com.studyhub.service.FriendService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,26 +17,38 @@ public class FriendController {
     private FriendService friendService;
 
     @PostMapping("/add")
-    public String addFriend(@RequestParam String id, @RequestParam String userid) {
+    public ResponseEntity<String> addFriend(@RequestParam String id, @RequestParam String userid) {
+        if(id == null || userid == null || id.isEmpty() || userid.isEmpty()) {
+            return new ResponseEntity<>("Invalid parameters", HttpStatus.BAD_REQUEST);
+        }
         friendService.addFriend(id, userid);
-        friendService.addFriend(userid, id);
-        return "Friend added";
+        return new ResponseEntity<>("Friend added", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/remove")
-    public String removeFriend(@RequestParam String id, @RequestParam String userid) {
+    public ResponseEntity<String> removeFriend(@RequestParam String id, @RequestParam String userid) {
+        if(id == null || userid == null || id.isEmpty() || userid.isEmpty()) {
+            return new ResponseEntity<>("Invalid parameters", HttpStatus.BAD_REQUEST);
+        }
         friendService.removeFriend(id, userid);
-        return "Friend removed";
+        return new ResponseEntity<>("Friend removed", HttpStatus.OK);
     }
 
     @PutMapping("/update")
-    public String updateFriend(@RequestParam String id, @RequestParam String userid, @RequestBody Map<String, Object> updates) {
+    public ResponseEntity<String> updateFriend(@RequestParam String id, @RequestParam String userid, @RequestBody Map<String, Object> updates) {
+        if(id == null || userid == null || id.isEmpty() || userid.isEmpty() || updates == null) {
+            return new ResponseEntity<>("Invalid parameters", HttpStatus.BAD_REQUEST);
+        }
         friendService.updateFriend(id, userid, updates);
-        return "Friend updated";
+        return new ResponseEntity<>("Friend updated", HttpStatus.OK);
     }
 
     @GetMapping("/list/{userId}")
-    public List<String> listFriends(@PathVariable String userId) {
-        return friendService.listFriends(userId);
+    public ResponseEntity<List<String>> listFriends(@PathVariable String userId) {
+        if(userId == null || userId.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        List<String> friends = friendService.listFriends(userId);
+        return new ResponseEntity<>(friends, HttpStatus.OK);
     }
 }
