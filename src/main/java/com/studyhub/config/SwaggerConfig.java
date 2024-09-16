@@ -13,7 +13,7 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("StudyHub API's")
+                        .title("API's")
                         .description("by satyam"));
     }
 
