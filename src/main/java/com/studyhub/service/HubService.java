@@ -119,48 +119,42 @@ public class HubService {
             throw new IllegalArgumentException("User ID must not be null or empty");
         }
 
-        // Log the userId
-        System.out.println("Fetching hubs for userId: " + userId);
-
-        // Query the user_hubs collection where userId matches
-        Query query = firestore.collection("hubs").whereEqualTo("creatorId", userId);
-        ApiFuture<QuerySnapshot> future = query.get();
-        List<QueryDocumentSnapshot> documents = future.get().getDocuments();
-
-        // Log the number of documents found
-        System.out.println("Number of documents found: " + documents.size());
-
-        // Prepare list of hubs
         List<Map<String, Object>> userHubs = new ArrayList<>();
 
-        // If user has not joined any hubs
-        if (documents.isEmpty()) {
-            return userHubs;
+        // First, get hubs where user is creator
+        Query creatorQuery = firestore.collection("hubs").whereEqualTo("creatorId", userId);
+        ApiFuture<QuerySnapshot> creatorFuture = creatorQuery.get();
+        List<QueryDocumentSnapshot> creatorDocs = creatorFuture.get().getDocuments();
+
+        for (QueryDocumentSnapshot doc : creatorDocs) {
+            Map<String, Object> hubData = doc.getData();
+            hubData.put("hubId", doc.getId());
+            userHubs.add(hubData);
         }
 
-        // Fetch each hub the user has joined by hubId
-        for (QueryDocumentSnapshot document : documents) {
-            String hubId = document.getId();
+        // Next, get hubs from user_hubs collection (where user is a member)
+        Query userHubsQuery = firestore.collection("user_hubs").whereEqualTo("userId", userId);
+        ApiFuture<QuerySnapshot> userHubsFuture = userHubsQuery.get();
+        List<QueryDocumentSnapshot> userHubDocs = userHubsFuture.get().getDocuments();
 
-            // Log the hubId
-            System.out.println("Fetching hub with hubId: " + hubId);
-
-            // Check if hubId is not null or empty
-            if ( hubId.isEmpty()) {
-                continue; // Skip this document
-            }
-
-            // Retrieve the hub details
-            DocumentReference hubRef = firestore.collection("hubs").document(hubId);
-            ApiFuture<DocumentSnapshot> hubFuture = hubRef.get();
-            DocumentSnapshot hubDocument = hubFuture.get();
-
-            if (hubDocument.exists()) {
-                Map<String, Object> hubData = hubDocument.getData();
-                hubData.put("hubId", hubDocument.getId()); // Add the hubId to the response
-                userHubs.add(hubData);  // Add hub data to the list
+        for (QueryDocumentSnapshot doc : userHubDocs) {
+            String hubId = (String) doc.get("hubId");
+            if (hubId != null && !hubId.isEmpty()) {
+                DocumentReference hubRef = firestore.collection("hubs").document(hubId);
+                ApiFuture<DocumentSnapshot> hubFuture = hubRef.get();
+                DocumentSnapshot hubDoc = hubFuture.get();
+                if (hubDoc.exists()) {
+                    Map<String, Object> hubData = hubDoc.getData();
+                    hubData.put("hubId", hubDoc.getId());
+                    // Avoid duplicates in case user is both creator and member
+                    boolean alreadyAdded = userHubs.stream().anyMatch(h -> h.get("hubId").equals(hubId));
+                    if (!alreadyAdded) {
+                        userHubs.add(hubData);
+                    }
+                }
             }
         }
+
         return userHubs;
     }
 
